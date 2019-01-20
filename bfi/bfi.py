@@ -1,6 +1,12 @@
 import logging
 
 
+def execute(program: str, stack_length=2000):
+    bfi = Bfi(stack_length=stack_length)
+    bfi.load(program)
+    bfi.evaluate()
+
+
 class Bfi:
     def __init__(self, stack_length=2000, log_level=logging.INFO):
         self._logger = logging.getLogger(self.__class__.__name__)
@@ -12,6 +18,8 @@ class Bfi:
 
         self.inst_stack = []
         self.inst_ptr = 0
+
+        self.cycles = 0
 
         self.program = ''
 
@@ -26,20 +34,21 @@ class Bfi:
             ']': self.close_brace
         }
 
-    def load(self, program: str):
+    def load(self, program: str, validate: bool=True):
         self.program = program
 
         self._logger.debug(f'loading "{self.program}"')
 
-        brace_count = 0
-        for c in self.program:
-            if c == '[':
-                brace_count += 1
-            elif c == ']':
-                brace_count -= 1
+        if validate:
+            brace_count = 0
+            for c in self.program:
+                if c == '[':
+                    brace_count += 1
+                elif c == ']':
+                    brace_count -= 1
 
-        if brace_count != 0:
-            raise ValueError('program not valid (braces do not match)')
+            if brace_count != 0:
+                raise ValueError('program not valid (braces do not match)')
 
         self.reset()
 
@@ -49,6 +58,7 @@ class Bfi:
         self.stack = [0] * self.stack_length
         self.stack_ptr = 0
         self.inst_ptr = 0
+        self.cycles = 0
 
     def inc(self):
         self.stack[self.stack_ptr] = (self.stack[self.stack_ptr] + 1) % 256
@@ -100,12 +110,15 @@ class Bfi:
         self._logger.debug(f'inst stack: {self.inst_stack}')
 
         self.inst_ptr += 1
+        self.cycles += 1
 
     def evaluate(self):
         self.inst_ptr = 0
         program_length = len(self.program)
         while self.inst_ptr < program_length:
             self.step()
+
+        self._logger.info(f'completed in {self.cycles} cycles')
 
 
 if __name__ == '__main__':
@@ -115,6 +128,6 @@ if __name__ == '__main__':
 
     hello_world = '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.'
 
-    bfi.load(hello_world)
+    bfi.load(hello_world, validate=False)
     bfi.evaluate()
 
