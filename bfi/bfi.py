@@ -31,7 +31,15 @@ class Bfi:
 
         self._logger.debug(f'loading "{self.program}"')
 
-        # todo: validate program (count braces)
+        brace_count = 0
+        for c in self.program:
+            if c == '[':
+                brace_count += 1
+            elif c == ']':
+                brace_count -= 1
+
+        if brace_count != 0:
+            raise ValueError('program not valid (braces do not match)')
 
         self.reset()
 
@@ -103,8 +111,10 @@ class Bfi:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
-    program = '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.'
-    bfi = Bfi(stack_length=16)
-    bfi.load(program)
+    bfi = Bfi(stack_length=32)
+
+    hello_world = '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.'
+
+    bfi.load(hello_world)
     bfi.evaluate()
 
