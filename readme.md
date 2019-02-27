@@ -21,6 +21,8 @@ Basic object usage: (1) create the oject (2) load the program, and (3) evaluate 
     >>> bfi = Bfi()
     >>> bfi.load('++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.')
     >>> bfi.evaluate()
+    Hello World!
+    >>>
 
 Object structure was utilized throughout `bfi/bfi.py` to allow for efficient coding using inheritance.
 
@@ -30,7 +32,9 @@ A convenience method is also provided called `execute()`:
 
     >>> from bfi import execute
     >>> execute('++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.')
-
+    Hello World!
+    >>>
+    
 The `execute()` function takes these arguments:
 
  * `program: str`
