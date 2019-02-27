@@ -2,8 +2,19 @@ import logging
 from sys import exit
 
 
-def execute(program: str, stack_length=2000):
-    bfi = Bfi(stack_length=stack_length)
+def execute(program: str, stack_length: int=2000, bfi_type: int=0):
+    bfi_dict = {
+        0: Bfi,
+        1: BfiT1,
+        2: BfiT2,
+        3: BfiT3
+    }
+
+    if bfi_type not in bfi_dict.keys():
+        raise ValueError('invalid BF type (should be 0, 1, 2, or 3)')
+
+    bfi = bfi_dict[bfi_type](stack_length)
+
     bfi.load(program)
     bfi.evaluate()
 
